@@ -51,6 +51,7 @@
 </body>
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script>
+var se = true
     const map = L.map('map').setView([0, 0], 3);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         //className: "dark"
@@ -68,7 +69,10 @@
             .then(response => response.json())
             .then(data => {
                 issmark.setLatLng([data.latitude, data.longitude]);
-                map.setView([data.latitude, data.longitude]);
+if(se == true){
+                map.setView([data.latitude, data.longitude])
+se = false
+;}
                 const latlngs = polyline.getLatLngs();
                 latlngs.push([data.latitude, data.longitude]);
                 polyline.setLatLngs(latlngs);
