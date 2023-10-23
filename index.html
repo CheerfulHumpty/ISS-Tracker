@@ -16,15 +16,15 @@
         width: 260px;
         left: 77.5%;
         border: 6px solid black;
-        font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        font-weight:1;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-weight: 10;
     }
-    #li{
+    #li {
         position: absolute;
         top: 30%;
         left: -3%;
     }
-    #i{
+    #i {
         font-weight: 400;
         position: absolute;
         left: 19%;
@@ -33,59 +33,57 @@
     }
 </style>
 <body>
-    <div id="cont"> 
+    <div id="cont">
         <div id="li">
             <H1 id="i">ISS Tracker</H1>
-    <ul>
-        <li>Velocity : </li><span id="v"></span>
-        <br>
-        
-        <li>City : </li><span id="c"></span>
-        <br>
-        <li>State : </li><span id="s"></span>
-        <br>
-        <li>Country : </li><span id="co"></span>
-    </ul></div></div>
+            <ul>
+                <li>Velocity : <span id="v"></span></li>
+                <br>
+                <li>City : <span id="c"></span></li>
+                <br>
+                <li>State : <span id="s"></span></li>
+                <br>
+                <li>Country : <span id="co"></span></li>
+            </ul>
+        </div>
+    </div>
     <div id="map" style="width: 925px;height: 600px;"></div>
-   
 </body>
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script>
     const map = L.map('map').setView([0, 0], 3);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //className: "dark"
-    }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
     const iss = L.divIcon({
         className: 'custom-marker',
         html: '<img src="iss.svg" width="40" height="40" alt="ISS">',
-        iconSize: [30, 30],
+        iconSize: [30, 30]
     });
     const issmark = L.marker([0, 0], { icon: iss }).addTo(map);
     const polyline = L.polyline([], { color: 'red', weight: 4 }).addTo(map);
 
     function update() {
-        fetch('https://api.wheretheiss.at/v1/satellites/25544')
-            .then((response) => response.json())
-            .then((data) => {
+        fetch("https://api.wheretheiss.at/v1/satellites/25544")
+            .then(response => response.json())
+            .then(data => {
                 issmark.setLatLng([data.latitude, data.longitude]);
                 map.setView([data.latitude, data.longitude]);
                 const latlngs = polyline.getLatLngs();
                 latlngs.push([data.latitude, data.longitude]);
                 polyline.setLatLngs(latlngs);
-                document.getElementById('v').textContent = data.velocity + ' km/h';
-                fetch(
-                    'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+data.latitude +'&lon='+data.longitude
-                )
-                    .then((response) => response.json())
-                    .then((data) => {
-                        document.getElementById('c').textContent = data.address.city;
-                        document.getElementById('s').textContent = data.address.state;
-                        document.getElementById('co').textContent = data.address.country 
+                document.getElementById("v").textContent = data.velocity + " km/h";
+
+                
+                fetch(`https://photon.komoot.io/reverse?lon=${data.longitude}&lat=${data.latitude}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("c").innerText = data.features[0].properties.city || '';
+                        document.getElementById("s").innerText = data.features[0].properties.state || '';
+                        document.getElementById("co").innerText= data.features[0].properties.country || '';
                     });
             });
     }
     update();
-    setInterval(update, 1000);
+    setInterval(update, 5000);
 </script>
-
 </html>
