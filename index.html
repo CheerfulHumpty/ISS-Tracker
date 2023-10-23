@@ -17,7 +17,7 @@
         left: 77.5%;
         border: 6px solid black;
         font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        font-weight:10;
+        font-weight:1;
     }
     #li{
         position: absolute;
@@ -37,14 +37,14 @@
         <div id="li">
             <H1 id="i">ISS Tracker</H1>
     <ul>
-        <li>Velocity : <span id="v"></span></li>
+        <li>Velocity : </li><span id="v"></span>
         <br>
         
-        <li>City : <span id="c"></span></li>
+        <li>City : </li><span id="c"></span>
         <br>
-        <li>State : <span id="s"></span></li>
+        <li>State : </li><span id="s"></span>
         <br>
-        <li>Country : <span id="co"></span></li>
+        <li>Country : </li><span id="co"></span>
     </ul></div></div>
     <div id="map" style="width: 925px;height: 600px;"></div>
    
@@ -58,32 +58,34 @@
     const iss = L.divIcon({
         className: 'custom-marker',
         html: '<img src="iss.svg" width="40" height="40" alt="ISS">',
-        iconSize: [30, 30]
+        iconSize: [30, 30],
     });
     const issmark = L.marker([0, 0], { icon: iss }).addTo(map);
     const polyline = L.polyline([], { color: 'red', weight: 4 }).addTo(map);
 
     function update() {
-        fetch("https://api.wheretheiss.at/v1/satellites/25544")
-            .then(response => response.json())
-            .then(data => {
+        fetch('https://api.wheretheiss.at/v1/satellites/25544')
+            .then((response) => response.json())
+            .then((data) => {
                 issmark.setLatLng([data.latitude, data.longitude]);
-                map.setView([data.latitude, data.longitude])
-;
+                map.setView([data.latitude, data.longitude]);
                 const latlngs = polyline.getLatLngs();
                 latlngs.push([data.latitude, data.longitude]);
                 polyline.setLatLngs(latlngs);
-                document.getElementById("v").textContent = data.velocity+" km/h";
-                fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + data.latitude + '&lon=' + data.longitude)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById("c").textContent = data.address.city;
-                        document.getElementById("s").textContent = data.address.state;
-                        document.getElementById("co").textContent = data.address.country;
+                document.getElementById('v').textContent = data.velocity + ' km/h';
+                fetch(
+                    'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+data.latitude +'&lon='+data.longitude
+                )
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.getElementById('c').textContent = data.address.city;
+                        document.getElementById('s').textContent = data.address.state;
+                        document.getElementById('co').textContent = data.address.country 
                     });
             });
     }
     update();
     setInterval(update, 1000);
 </script>
+
 </html>
