@@ -44,6 +44,10 @@
                 <li>State : <span id="s"></span></li>
                 <br>
                 <li>Country : <span id="co"></span></li>
+                <br>
+                <li>Visibility: <span id="vis"></span></li>
+                <br>
+                <li>Altitude : <span id="al"></span></li>
             </ul>
         </div>
     </div>
@@ -56,11 +60,11 @@
 
     const iss = L.divIcon({
         className: 'custom-marker',
-        html: '<img src="iss.svg" width="40" height="40" alt="ISS">',
-        iconSize: [30, 30]
+        html: '<img src="International_Space_Station.svg" width="60" height="60" alt="ISS">',
+        iconSize: [50, 50]
     });
     const issmark = L.marker([0, 0], { icon: iss }).addTo(map);
-    const polyline = L.polyline([], { color: 'red', weight: 4 }).addTo(map);
+    const polyline = L.polyline([], { color: 'red', weight: 5 }).addTo(map);
 
     function update() {
         fetch("https://api.wheretheiss.at/v1/satellites/25544")
@@ -72,6 +76,8 @@
                 latlngs.push([data.latitude, data.longitude]);
                 polyline.setLatLngs(latlngs);
                 document.getElementById("v").textContent = data.velocity + " km/h";
+                document.getElementById("vis").innerHTML = data.visibility;
+                document.getElementById("al").innerHTML=  data.altitude.toFixed(3)
 
                 
                 fetch(`https://photon.komoot.io/reverse?lon=${data.longitude}&lat=${data.latitude}`)
